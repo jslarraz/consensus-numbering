@@ -36,7 +36,7 @@ jobs:
         run: |
           if [[ ! -f ./candidate/candidate-usn ]];
           then
-            echo echo "SKIP=true" >> "$GITHUB_OUTPUT"
+            echo "SKIP=true" >> "$GITHUB_OUTPUT"
           fi
 
       - name: rename the file
