@@ -1,0 +1,21 @@
+name: update
+
+on:
+  push:
+    branches: # Requires that main is restricted (and why wouldn't it be?)
+      - main
+
+jobs:
+  compute-number:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repo content
+        uses: actions/checkout@v2 # checkout the repository content to github runner
+
+      - name: setup python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11' # install the python version needed
+
+      - name: execute py script # run main.py
+        run: python main.py
