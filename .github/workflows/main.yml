@@ -18,10 +18,8 @@ jobs:
           python-version: '3.11' # install the python version needed
 
       - name: py-script
-        run: |
-          CAPTURE=$(python main.py)
-          echo "Testing: NEXT_VALUE=${CAPTURE}"
-          echo "NEXT_VALUE=${CAPTURE}" >> "$GITHUB_OUTPUT"
+        id: py-script
+        run: echo "NEXT_VALUE=$(python main.py)" >> "$GITHUB_OUTPUT"
 
       - name: show-me-the-value
         env:
