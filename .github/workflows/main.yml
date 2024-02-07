@@ -43,8 +43,7 @@ jobs:
         env:
           COUNTER: ${{ steps.py-script.outputs.NEXT_VALUE }}
         if: ${{ steps.check-candidate.outputs.skip != 1 }}
-        run: |
-          if test -f ./candidate/candidate-usn; then; mv ./candidate/* ./sn/SN-${COUNTER}
+        run: mv ./candidate/* ./sn/SN-${COUNTER}
 
       - name: Commit files
         if: ${{ steps.check-candidate.outputs.skip != 1 }}
