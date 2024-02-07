@@ -18,9 +18,12 @@ jobs:
           python-version: '3.11' # install the python version needed
 
       - name: py-script
-        run: echo "NEXT_VALUE=$(python main.py)" >> "$GITHUB_OUTPUT"
+        run: |
+          CAPTURE=$(python main.py)
+          echo "Testing: NEXT_VALUE=${CAPTURE}"
+          echo "NEXT_VALUE=${CAPTURE}" >> "$GITHUB_OUTPUT"
 
       - name: show-me-the-value
         env:
-          NEXT_VALUE: ${{ steps.py-script.outputs.NEXT_VALUE }}
-        run: echo "Can you believe that the next value is ${NEXT_VALUE}?"
+          COUNTER: ${{ steps.py-script.outputs.NEXT_VALUE }}
+        run: echo "Can you believe that the next value is ${COUNTER}?"
