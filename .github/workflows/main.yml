@@ -22,6 +22,7 @@ jobs:
         with:
           python-version: '3.11' # install the python version needed
 
+      # TODO write this in bash as to remove the Python dependency
       - name: run python script to get the latest number
         id: py-script
         run: echo "NEXT_VALUE=$(python main.py)" >> "$GITHUB_OUTPUT"
@@ -44,7 +45,7 @@ jobs:
           COUNTER: ${{ steps.py-script.outputs.NEXT_VALUE }}
         if: ${{ ! steps.check-candidate.outputs.SKIP }}
         run: |
-          sed -i "s/{{USN}}/$COUNTER/g" candidate-usn
+          sed -i "s/{{USN}}/$COUNTER/g" ./candidate/candidate-usn
           mv ./candidate/candidate-usn ./sn/SN-${COUNTER}
 
       - name: Commit files
