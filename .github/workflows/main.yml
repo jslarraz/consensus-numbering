@@ -42,11 +42,11 @@ jobs:
       - name: rename the file
         env:
           COUNTER: ${{ steps.py-script.outputs.NEXT_VALUE }}
-        if: ${{ steps.check-candidate.outputs.skip != 1 }}
+        if: ${{ steps.check-candidate.outputs.SKIP != "1" }}
         run: mv ./candidate/* ./sn/SN-${COUNTER}
 
       - name: Commit files
-        if: ${{ steps.check-candidate.outputs.skip != 1 }}
+        if: ${{ steps.check-candidate.outputs.SKIP != "1" }}
         run: |
             git config --local user.email "action@github.com"
             git config --local user.name "GitHub Action"
@@ -54,7 +54,7 @@ jobs:
             git commit -m "Updating numbers DB"
 
       - name: Push changes
-        if: ${{ steps.check-candidate.outputs.skip != 1 }}
+        if: ${{ steps.check-candidate.outputs.SKIP != "1" }}
         uses: ad-m/github-push-action@v0.8.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
