@@ -8,6 +8,9 @@ on:
 jobs:
   compute-number:
     runs-on: ubuntu-latest
+    concurrency: # Ensures that only a single action runs at a time
+      group: numbering
+      cancel-in-progress: false
     steps:
       - name: checkout repo content
         uses: actions/checkout@v4 # checkout the repository content to github runner
@@ -17,7 +20,7 @@ jobs:
         with:
           python-version: '3.11' # install the python version needed
 
-      - name: py-script
+      - name: run python script to get the number
         id: py-script
         run: echo "NEXT_VALUE=$(python main.py)" >> "$GITHUB_OUTPUT"
 
@@ -25,3 +28,19 @@ jobs:
         env:
           COUNTER: ${{ steps.py-script.outputs.NEXT_VALUE }}
         run: echo "Can you believe that the next value is ${COUNTER}?"
+
+      - name: rename the file
+        env:
+          COUNTER: ${{ steps.py-script.outputs.NEXT_VALUE }}
+        run: cp ./candidate/* ./sn/SN-${COUNTER}
+
+      - name: Commit files
+        run: |
+            git config --local user.email "action@github.com"
+            git config --local user.name "GitHub Action"
+            git commit -m "Add changes" -a
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
