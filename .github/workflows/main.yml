@@ -36,17 +36,17 @@ jobs:
         run: |
           if [[ ! -f ./candidate/candidate-usn ]];
           then
-            echo echo "SKIP=1" >> "$GITHUB_OUTPUT"
+            echo echo "SKIP=true" >> "$GITHUB_OUTPUT"
           fi
 
       - name: rename the file
         env:
           COUNTER: ${{ steps.py-script.outputs.NEXT_VALUE }}
-        if: ${{ steps.check-candidate.outputs.SKIP != "1" }}
+        if: ${{ ! steps.check-candidate.outputs.SKIP }}
         run: mv ./candidate/* ./sn/SN-${COUNTER}
 
       - name: Commit files
-        if: ${{ steps.check-candidate.outputs.SKIP != "1" }}
+        if: ${{ ! steps.check-candidate.outputs.SKIP }}
         run: |
             git config --local user.email "action@github.com"
             git config --local user.name "GitHub Action"
@@ -54,7 +54,7 @@ jobs:
             git commit -m "Updating numbers DB"
 
       - name: Push changes
-        if: ${{ steps.check-candidate.outputs.SKIP != "1" }}
+        if: ${{ ! steps.check-candidate.outputs.SKIP }}
         uses: ad-m/github-push-action@v0.8.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
