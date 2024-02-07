@@ -32,7 +32,7 @@ jobs:
       - name: rename the file
         env:
           COUNTER: ${{ steps.py-script.outputs.NEXT_VALUE }}
-        run: cp ./candidate/* ./sn/SN-${COUNTER}
+        run: mv ./candidate/* ./sn/SN-${COUNTER}
 
       - name: Commit files
         run: |
