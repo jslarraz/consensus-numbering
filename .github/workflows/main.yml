@@ -2,39 +2,54 @@ name: update
 
 on:
   push:
+    paths: # Requires changes to the candidate folder
+      - './candidate/*'
     branches: # Requires that main is restricted (and why wouldn't it be?)
       - main
 
 jobs:
   compute-number:
     runs-on: ubuntu-latest
+
     concurrency: # Ensures that only a single action runs at a time
       group: numbering
       cancel-in-progress: false
+
     steps:
       - name: checkout repo content
-        uses: actions/checkout@v4 # checkout the repository content to github runner
+        uses: actions/checkout@v4 # checkout the repository content
 
       - name: setup python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11' # install the python version needed
 
-      - name: run python script to get the number
+      - name: run python script to get the latest number
         id: py-script
         run: echo "NEXT_VALUE=$(python main.py)" >> "$GITHUB_OUTPUT"
 
       - name: show-me-the-value
         env:
           COUNTER: ${{ steps.py-script.outputs.NEXT_VALUE }}
-        run: echo "Can you believe that the next value is ${COUNTER}?"
+        run: echo "Next USN value is ${COUNTER}?"
+
+      - name: check if candidate file exists
+        id: check-candidate
+        run: |
+          if [[ ! -f ./candidate/candidate-usn ]];
+          then
+            echo echo "SKIP=1" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: rename the file
         env:
           COUNTER: ${{ steps.py-script.outputs.NEXT_VALUE }}
-        run: mv ./candidate/* ./sn/SN-${COUNTER}
+        if: ${{ steps.check-candidate.outputs.skip != 1 }}
+        run: |
+          if test -f ./candidate/candidate-usn; then; mv ./candidate/* ./sn/SN-${COUNTER}
 
       - name: Commit files
+        if: ${{ steps.check-candidate.outputs.skip != 1 }}
         run: |
             git config --local user.email "action@github.com"
             git config --local user.name "GitHub Action"
@@ -42,6 +57,7 @@ jobs:
             git commit -m "Updating numbers DB"
 
       - name: Push changes
-        uses: ad-m/github-push-action@master
+        if: ${{ steps.check-candidate.outputs.skip != 1 }}
+        uses: ad-m/github-push-action@v0.8.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
