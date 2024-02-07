@@ -43,7 +43,9 @@ jobs:
         env:
           COUNTER: ${{ steps.py-script.outputs.NEXT_VALUE }}
         if: ${{ ! steps.check-candidate.outputs.SKIP }}
-        run: mv ./candidate/candidate-usn ./sn/SN-${COUNTER}
+        run: |
+          sed -i "s/{{USN}}/$COUNTER/g" candidate-usn
+          mv ./candidate/candidate-usn ./sn/SN-${COUNTER}
 
       - name: Commit files
         if: ${{ ! steps.check-candidate.outputs.SKIP }}
