@@ -43,7 +43,7 @@ jobs:
         env:
           COUNTER: ${{ steps.py-script.outputs.NEXT_VALUE }}
         if: ${{ ! steps.check-candidate.outputs.SKIP }}
-        run: mv ./candidate/* ./sn/SN-${COUNTER}
+        run: mv ./candidate/candidate-usn ./sn/SN-${COUNTER}
 
       - name: Commit files
         if: ${{ ! steps.check-candidate.outputs.SKIP }}
