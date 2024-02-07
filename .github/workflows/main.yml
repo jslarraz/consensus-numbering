@@ -10,12 +10,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout repo content
-        uses: actions/checkout@v2 # checkout the repository content to github runner
+        uses: actions/checkout@v4 # checkout the repository content to github runner
 
       - name: setup python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11' # install the python version needed
 
-      - name: execute py script # run main.py
-        run: python main.py
+      - name: py-script
+        run: echo "NEXT_VALUE=$(python main.py)" >> "$GITHUB_OUTPUT"
+
+      - name: show-me-the-value
+        env:
+          NEXT_VALUE: ${{ steps.py-script.outputs.NEXT_VALUE }}
+        run: echo "Can you believe that the next value is ${NEXT_VALUE}?"
