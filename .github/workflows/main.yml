@@ -22,10 +22,11 @@ jobs:
         with:
           python-version: '3.11' # install the python version needed
 
-      # TODO write this in bash as to remove the Python dependency
-      - name: run python script to get the latest number
+      - name: run script to get latest number
         id: py-script
-        run: echo "NEXT_VALUE=$(python main.py)" >> "$GITHUB_OUTPUT"
+        run: |
+          HIGHEST=$(find ./sn -maxdepth 1 -type f | sort -V | tail -n 1 | cut -d "-" -f2)
+          echo "NEXT_VALUE=$(($HIGHEST+1))" >> "$GITHUB_OUTPUT"
 
       - name: show-me-the-value
         env:
