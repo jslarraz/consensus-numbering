@@ -50,12 +50,14 @@ jobs:
           mv ./candidate/candidate-usn ./sn/SN-${COUNTER}
 
       - name: Commit files
+        env:
+          COUNTER: ${{ steps.py-script.outputs.NEXT_VALUE }}
         if: ${{ ! steps.check-candidate.outputs.SKIP }}
         run: |
             git config --local user.email "action@github.com"
             git config --local user.name "GitHub Action"
             git add --all
-            git commit -m "Updating numbers DB"
+            git commit -m "Updating numbers DB - SN-${COUNTER}"
 
       - name: Push changes
         if: ${{ ! steps.check-candidate.outputs.SKIP }}
